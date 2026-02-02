@@ -45,6 +45,16 @@ Intutuion:
     f. Agar hua hai to minStack se bhi pop kar do and min update kar do to current minStack.peek() se.
     g. Agar minStack pop karte time empty ho jae, to min = Integer.MAX_VALUE kar do.
     h. Baaki top() and getMin() to simple hai, bas stack.peek() and min return kar do.
+
+
+Bonus tip:
+1. Isko tum main stack me bhi kar sakte ho, extra space use kiye bina.
+2. Vo kese:
+    a. Simple, jo main stack hai usme tumko pairs store karne hai.
+    b. Pairs as Stack<int[]>, abhi ye array 2 cheeze hold karega.
+    c. 0th index par current element and 1th index par current min element.
+    d. Baki tum samajhdar ho, kabhi intution padhna to lagana aise.
+
 */
 
 
