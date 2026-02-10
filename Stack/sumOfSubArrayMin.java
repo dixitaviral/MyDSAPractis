@@ -24,7 +24,15 @@ Intution:
     --------> ye arrow dikha ra hai tujhe ek direction me move krna hai and subarray bhi isi direction
     [3,1,2,4] me banega.
 
-4. Chal yaha tak smjh aa gaya.
+4. Chal yaha tak smjh aa gaya. Ek catch or hai, tu soch ra hoga ki i == len tak loop kyu chalaya:
+    a. Pehlie baat isliye, kyuki hum ek element stack me dalte hai and then i = 1 se stack check hota hai.
+    b. Abhi jab i = len - 1 hoga mtlb ki last element, us time to last element sirf compare hi hoga
+        element i = len - 2 se ya keh le stack peek se.
+    c. And then i < len condition par loop end ho jaega and last element comparison me jaega hi ni.
+    d. Tabhi hum loop i <= len tak chalate hai, taki last element compare ho jaye.
+    e. ek reason ye bhi hai ki man le koi smaller element mila hi ni, to kam se km cur = 0 hoga,
+        usse to sare hi bade hoge, to humko ek break point mil jaega.
+
 5. Abhi humko increasing order maintain karna hai, iska mtlb peek element se current i element chota hota hai
     to pop hoga.
 6. Abhi soch point 5 vali condition ka kya mtlb hua:

@@ -57,7 +57,6 @@ class Solution {
 
         int res[] = new int[nums1.length];
 
-
         for(int i = 0; i < nums2.length; i++){
             while(!stack.isEmpty() && stack.peek() < nums2[i]){
                 map.put(stack.pop(), nums2[i]);
