@@ -1,3 +1,152 @@
 1. Base case → rukne ki jagah
 2. Chhota problem → n-1
 3. Combine step → current ka kaam + recursive result
+
+
+# Recursion — Golden Rules (Seedha, Copy-Paste Notes)
+
+## 1. Recursion ka core idea
+
+Bada problem
+→ **same type ka chhota problem**
+→ result wapas aake **combine**.
+
+---
+
+## 2. Har recursion me 3 cheezein fix hoti hain
+
+### (1) Base case
+
+Jahan function **ruk jaata hai**.
+Nahi hoga → **infinite recursion / stack overflow**.
+
+---
+
+### (2) Smaller call
+
+Problem ko **size me chhota** karna zaroori.
+
+Examples:
+
+* `n → n-1`
+* `n → n/2`
+* `n → n/10`
+* tree → `left` & `right`
+
+Agar size **chhota nahi ho raha** → recursion galat.
+
+---
+
+### (3) Combine step
+
+Recursive call ka **result use** karke final answer banana.
+
+Examples:
+
+* Sum → `n + f(n-1)`
+* Even sum → `2n + f(n-1)`
+* Power of two → **sirf result return**
+* Tree count → `left + right + 1`
+* Tree height → `max(left, right) + 1`
+
+👉 **Combine ka emotion hi problem define karta hai.**
+
+---
+
+## 3. Execution ka hidden flow
+
+Code:
+
+```
+A
+recursive call
+B
+```
+
+Actual run:
+
+```
+A A A ...   (downward)
+... B B B   (upward)
+```
+
+* **Call se pehle** → neeche ja rahe ho
+* **Call ke baad** → wapas aa rahe ho
+
+Most kaam **wapas aate waqt** hota hai.
+
+---
+
+## 4. Recursion ke shapes
+
+### Linear recursion
+
+```
+n → n-1 → n-2
+```
+
+Easy, calm.
+Examples: sum, factorial, power of two, digits sum.
+
+---
+
+### Two-way recursion
+
+```
+        n
+      /   \
+   n-1   n-2
+```
+
+Tree jaisa feel.
+Repeat subproblems → **DP ka janam**.
+
+---
+
+### Tree recursion
+
+Left + Right combine logic:
+
+| Problem     | Combine               |
+| ----------- | --------------------- |
+| Count nodes | `+`                   |
+| Height      | `max`                 |
+| Min depth   | **valid path ka min** |
+
+---
+
+## 5. DP kab aata hai?
+
+DP =
+**Recursion + repeating subproblems + reuse possible**
+
+Teenon nahi → DP nahi.
+
+---
+
+## 6. Recursion likhne ka mental template
+
+Sochne ka fixed order:
+
+```
+1. Base case kya hai?
+2. Smaller problem kaise banega?
+3. Result kaise combine hoga?
+```
+
+Bas.
+Har recursion isi se likhti hai.
+
+---
+
+## 7. Final lock line 🔒
+
+> Recursion =
+> **rukna (base)**
+>
+> * **chhota karna (call)**
+> * **wapas aake jodna (combine)**
+
+Ye samajh gaya →
+DP, tree, backtracking, DFS
+sab natural lagte hain.
