@@ -25,7 +25,7 @@ Intution:
     2. But jab bhi tumko bole all combinations like permutations, then loop lena. All combinations me
         base condtion hamesha rehti hai jab current result input ke barabar ho jae
         to usko main result me add kar do.
-4. Abhi Simple hai humko upar dekh liya ki isme combination banane hai to loop lena padega.
+4. Abhi Simple hai humne upar dekh liya ki isme combination banane hai to loop lena padega.
 5. Abhi dusri cheez ye ki yaha par bhi choices hai but:
     a. Choice include/exclude ki ni hai
     b. yaha par choices hai ki kisko lu, let's say [1,2] array hai, to 0th index result ke liye do choices
