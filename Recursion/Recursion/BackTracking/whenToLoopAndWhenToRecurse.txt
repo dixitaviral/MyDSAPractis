@@ -1,0 +1,20 @@
+Backtracking rule:
+1. Make the answer.
+2. Recurse first time with include.
+3. Undo the current ans change.
+4. Recurse with exclude then.
+
+Till now there are two rules for either use loop and second recursion according to below two 
+situation:
+1. Combinations/Permutation: Loop.
+2. Subsets/Subsequence/PowerSet: Second recursion.
+
+But abhi naya pattern dekha gaya hai, jisme ki agar:
+
+1. Combinations/Permutation + Duplicates element: still loop, no change.
+But
+2. Subsets/Subsequence/PowerSet + Duplicate elements : then use loop.
+
+Bonus tip:
+
+1. You might also need to sort the input first. Like combination sum or susbet 2.
