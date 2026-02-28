@@ -1,0 +1,47 @@
+Dekh bhai ye to pata hai ki jab
+Subset+Duplicates aae -> Use loop + recursion
+Only Subset -> Two recursion no loop
+Combination with and without deplicates -> Use loop
+
+
+Now khel shuru hota hai start kab use kare and visited kab use kare:
+
+start mtlb ek variable jo sirf aage move krne me help krta hai.
+
+Suppose 
+
+func(int nums[]){
+    for(int i = 0; i < nums.length; i++){
+        func(nums); -> recursion call
+    }
+}
+
+Upar example me jab bhi recursion call hoga, i = 0 se start hoga. Isko tackle krne ke lie hum start
+variable introduce krte hai jese
+
+func(int nums[], int start){
+    for(int i = start; i < nums.length; i++){
+        func(nums, i+1); -> recursion call
+    }
+}
+
+start increment hamesha i+1 se hoga na ki start+1 se, kyuki for loop ke ander recursion call kar
+ho to update i hoga na ki start. Or ye janna hai ki abhi tak kaha tak traversae kiya hai
+to i bataega, start to sirf ye bataega ki current recusion branch start kaha se hui hai.
+
+Ab bat aati hai start kab use krna hai:
+1. Simple rule hai, jab tumko pata ho, ki tumko sirf aage move krna hai, peeche valo se mtlb ni
+    tb start use karo.
+
+
+Ab aai bat visited ki:
+
+visited basically ek array hai jisko hum index wise mark krte hai ya element wise bhi kar skte hai
+ki konse elements consider ho chuke hai. 
+
+to visited tab use karege jab humko pata hai ki man lo abhi hum indx 2 par hai, but humko 0 and 1
+index ki zrurt pad skti hai ans banane ke liye. 
+
+Since Backtracking me hum undo krte hai to visited bhi last me undo ho jata hai, but jo recursion
+depth hoti hai usme help krta hai.
+
