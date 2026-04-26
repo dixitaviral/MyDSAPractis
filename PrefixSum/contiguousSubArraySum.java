@@ -69,6 +69,5 @@ class Solution {
         }
 
         return false;
-
     }
 }
