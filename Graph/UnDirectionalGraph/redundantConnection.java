@@ -58,6 +58,31 @@ Intution:
             g. then put dfs call inside if and pass num as u. Agar true return hota hai means cycle
                 in this case return true. Tabhi upar vala if ans save karega.
             h. Else last me return false.
+    b. Ek approach hai:
+        i. Iss approach ko bolte hai Disjoint Union bole to DSU.
+        ii. Ye approach kese hota hai aao dekhte hai.
+        iii. Man lo ek graph hai 1-2-3-4.
+        iv. Abhi ek parent array lete hai, start me initialize hoge khud se.
+        v. Kyuki ques keh ra hai ki edges ek ek krke aa ri hai, to jab koi bhi edge ni aai hogi to start me
+            arr hoga = [0,1,2,3,4](neglect 0 as node starting from 1)
+        vi. Abhi man lo pehli edges aai 1,2. Means 2 se 1 ko ek edge ja ri hai. To Array update hoga:
+            arr[0,1,1,3,4].
+        vii. Then dusri edge aai: 2,3. Abhi dekho as per array 2 ka parent already 1 hai. and current edge
+            ke according 3 ka parent 2 hua. To indirectly dekhe to 3 tak pohochne ke liye 1 se start krna hoga
+        viii. To array update hoga: arr =[0,1,1,1]. then similary agar edge aai 3,4 to arr = [0,1,1,1,1].
+        ix. To yaha tak smjh aa gaya.
+        x. Abhi man lo ek edge aa jae 4,5 and 1,5. to graph bana
+            1-2-3-4
+             \    |
+              \   |
+               \--5
+        xi. Abhi 1,5 ne cycle bana di, array kese update hoga pehle aai 4,5 -> arr=[0,1,1,1,1,1]
+        xii. Then for 1,5, 1 ka parent as per array = 1 and 5 ka bhi parent as per array = 1.
+        xiii. Dono ke parent ho gye same. Mtlb ye edge cycle form karegi. To isko hata do and ans return
+                kar do.
+        xiv. Yhi approach hai.
+        xv. Jab bhi dekhna ye ques, iss approach ka code khud se likhna.
+        xvi. Code neeche diya hai, bss yaha par line by line intution ni likh ra hu.
 */
 
 class Solution {
@@ -110,4 +135,42 @@ class Solution {
     }
 
 }
+
+// DisjointSet Union Solution:
+
+class Solution {
+    public int[] findRedundantConnection(int[][] edges) {
+        int parent[] = new int[edges.length+1];
+
+        int ans[] = new int[2];
+
+        for(int i = 0; i < parent.length; i++){
+            parent[i] = i;
+        }
+
+        for(int []edge : edges){
+            int u = edge[0];
+            int v = edge[1];
+
+            int pu = find(u, parent);
+            int pv = find(v, parent);
+
+            if(pu == pv){
+                ans = edge;
+            }else{
+                parent[pv] = pu;
+            }
+        }
+
+        return ans;
+    }
+
+    public int find(int x, int[] parent){
+        while(x != parent[x])
+            x = parent[x];
+        return x;
+    }
+}
+
+
 
