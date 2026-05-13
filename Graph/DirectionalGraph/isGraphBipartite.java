@@ -76,7 +76,7 @@ Intuition:
         vii. then nieghbour node ko ek variable me store kar lege.
         viii. Abhi check karege ki neighbour node not visited hai by col[neighbour] == 0. 
         ix. then  inside if not visited condition, humko ek or nextCol variable lena hai jisme hum curr ki 
-            flipped value store karege by curr == 1 ? 1: 2.
+            flipped value store karege by curr == 1 ? 2: 1.
         x. ABhi kahoge aisa kyu, to upar logic me humne dekha tha ki next neighbour node ke pas
             alternate color hona chahiye. To agar current node ko 1 assign kiya hai to neighbour node
             2 and vice versa.
