@@ -127,6 +127,7 @@ class Solution {
             int u = flight[0];
             int v = flight[1];
             int w = flight[2];
+            
 
             map.computeIfAbsent(u, a -> new HashMap()).put(v, w);
         }
