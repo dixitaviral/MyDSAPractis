@@ -131,7 +131,7 @@ Aao dekhte hai kya optimization kar skte hai abhi, as above intution only clear 
         xii. If yes then continue and skip current loop cycle 
         xiii. If no then update matrix[row][col] and add to queue.add(row, col, currEffort);
         xiv. That's it at last return -1. 
-        Xv. Kyuki ans to BFS ke ander hi return kar re hai in point j.ii
+        Xv. Kyuki ans to BFS ke ander hi return kar re hai in point j.ii.
 
 
 */
