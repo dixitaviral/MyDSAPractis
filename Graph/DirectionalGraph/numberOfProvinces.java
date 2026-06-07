@@ -230,7 +230,7 @@ class Solution {
 
                     // agar pv and pu, means v and u ke parent same hai to vapas same kyu banana hai 
                     if(pv == pu) continue;
-
+                    // ye hieght valaneeche hai isko hi union by rank bolte hai
                     if(height[pu] > height[pv]){
                         parent[pv] = pu;
                     }else if(height[pv] > height[pu]){
@@ -261,6 +261,8 @@ class Solution {
         if(node == parent[node]) return node;
 
         int root = find(parent[node], parent);
+
+        // ye neeche jo kar rahe hai isko hi path compression bolte hai.
         // if already found parent for all child node of passed node, then store that parent node as parent of passed node.
         // so it doesn't do the calculation again, let's say we have graph 1-2-3-4. So parent array will look like
         // [1,1,2,3]. As 1s parent is 1, 2's parent is 1 and 3's parent is 2 and 4's parent is 3;
