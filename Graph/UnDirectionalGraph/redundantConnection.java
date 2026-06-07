@@ -59,7 +59,7 @@ Intution:
                 in this case return true. Tabhi upar vala if ans save karega.
             h. Else last me return false.
     b. Ek approach hai:
-        i. Iss approach ko bolte hai Disjoint Union bole to DSU.
+        i. Iss approach ko bolte hai DisjointSet Union bole to DSU.
         ii. Ye approach kese hota hai aao dekhte hai.
         iii. Man lo ek graph hai 1-2-3-4.
         iv. Abhi ek parent array lete hai, start me initialize hoge khud se.

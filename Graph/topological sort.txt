@@ -1,0 +1,1 @@
+agar indegree vala koi ques hai to topological sort kehte hai usko.
