@@ -73,3 +73,36 @@ class Solution {
         
     }
 }
+
+// more easy solution
+/*
+1. LeftMax and rightmax nikalo
+2. agar left chota to height current - leftmax
+3. Agar right chota to height curret - rightmax
+*/
+class Solution {
+    public int trap(int[] height) {
+        int i = 0; 
+        int j = height.length-1;
+        int leftMax = 0;
+        int rightMax = 0;
+
+        int water = 0;
+
+        while(i < j && j < height.length){
+            leftMax = Math.max(height[i], leftMax);
+            rightMax = Math.max(height[j], rightMax);
+
+            if(leftMax > rightMax){
+                water += rightMax - height[j];
+                j--;
+            }else if(rightMax >= leftMax){
+                water += leftMax - height[i];
+                i++;
+            }
+        }
+
+        return water;
+
+    }
+}
