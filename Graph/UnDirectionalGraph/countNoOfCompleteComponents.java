@@ -40,23 +40,30 @@ Intution:
 6. Ek baat hamesha dhyan rakhna graph ke sare ques BFS/DFS se solve ho jaege. And jo connected component
     vale ques hai, vo hamesha Disjoint set union se solve ho jaege.
 7. Abhi ye scene hai ki karege kese isko:
-    DFS Approach:
-    a. Simple hai. 
-    b. Sabse pehle ek hashmap bana lo konsi nodes ke beech me edges hai.
-    c. Then No of nodes par loop chala do.
-    d. Main baat aati hai complete connected component hai ya ni ye kese pata karege.
-    e. Simpe hai, do global variables lelo, nodes and edges.
-    f. Har node par dfs chala lo, usse pehle nodes and edges ko 0 se initialize kar do.
-    g. Then dfs ke ander tumko simple ye karna hai:
-        a. sbse pehle visited start node check if yes then return.
-        b. Then if not visited nodes++;
-        c. Then Take out connected nodes from map.
-        d. Abhi global var edges me edges += list.size().
-        e. Kyuki Ek start node se kitni edges nikli hai yahi to map bata ra hai.
-        f. fir no of connected nodes par for loop chala do.
-        g. if visited then continue.
-        h. else run dfs on that node.
-8. Abhi jab dfs ho jae pura start node par tab uske path check if node(node - 1) ==  edges. Why not use
+    i. DFS Approach:
+        a. Simple hai. 
+        b. Sabse pehle ek hashmap bana lo konsi nodes ke beech me edges hai.
+        c. Then No of nodes par loop chala do.
+        d. Main baat aati hai complete connected component hai ya ni ye kese pata karege.
+        e. Simpe hai, do global variables lelo, nodes and edges.
+        f. Har node par dfs chala lo, usse pehle nodes and edges ko 0 se initialize kar do.
+        g. Then dfs ke ander tumko simple ye karna hai:
+            a. sbse pehle visited start node check if yes then return.
+            b. Then if not visited nodes++;
+            c. Then Take out connected nodes from map.
+            d. Abhi global var edges me edges += list.size().
+            e. Kyuki Ek start node se kitni edges nikli hai yahi to map bata ra hai.
+            f. fir no of connected nodes par for loop chala do.
+            g. if visited then continue.
+            h. else run dfs on that node.
+    ii. BFS Approach:
+        a. BFS approch bhi same as DFS approach hai
+        b. But isme hum queue use krte hai.
+        c. For loop chalao till n and every node mark visited and add to queue.
+        d. Then BFS chalao nodes and edges count karo.
+        e. Then same check nodes(nodes-1) == numOfEdges.
+        f. Then count++;
+8. Abhi jab dfs/bfs ho jae pura start node par tab uske path check if node(node - 1) ==  edges. Why not use
     /2. Kyuki dfs me har edge do bar count hogi, jese 0 se 1,2 and 1 se 0,2. To isme 0->1 already counted thi.
 9. But 1-> 0 bhi count ho gyi. to edges bhi double ho jaegi.
 10. Bas abhi ye condition true hai to count++ else no count increase.
@@ -116,5 +123,136 @@ class Solution {
                 dfs(map, node, visited);
             }
         }
+    }
+}
+
+// BFS Solution
+class Solution {
+
+    public int countCompleteComponents(int n, int[][] edges) {
+       int visited[] = new int[n];
+
+       Map<Integer, List<Integer>> map = new HashMap();
+
+       for(int i = 0; i < edges.length; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+
+            map.computeIfAbsent(u, k -> new ArrayList()).add(v);
+            map.computeIfAbsent(v, K -> new ArrayList()).add(u);
+       }
+
+       Queue<Integer> queue = new ArrayDeque();
+       int nodes;
+       int numOfEdges;
+       int count = 0;
+       for(int i = 0; i < n; i++){
+            if(visited[i] == 1) continue;
+            
+            queue.add(i);
+            visited[i] = 1;// always mark node as visited when you put in queue.
+
+            nodes = 0;
+            numOfEdges = 0;
+
+            while(!queue.isEmpty()){
+                int node = queue.poll();//5
+
+                visited[node] = 1; // 1 1 1 1 1 1
+                nodes++;// 3
+
+                List<Integer> list = map.getOrDefault(node, List.of());// 3,5
+
+                numOfEdges += list.size();// 6
+
+                for(int v : list){
+                    if(visited[v] == 1) continue;
+
+                    queue.add(v);//5
+                    visited[v] = 1;
+                }
+            }
+
+            if(nodes*(nodes-1) == numOfEdges)
+                count++;
+       }
+
+       return count;
+    }
+}
+
+// DSU Solution
+class Solution {
+    public int countCompleteComponents(int n, int[][] edges) {
+        int parent[] = new int[n];
+        int height[] = new int[n];
+        Map<Integer, List<Integer>> map = new HashMap();
+        int degree[] = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            height[i] = 1;
+        }
+
+        // dsu
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+
+            degree[u]++;
+            degree[v]++;
+
+            int pu = find(u, parent);
+            int pv = find(v, parent);
+
+            if(pu == pv){
+                continue;
+            }
+
+            if(height[pu] < height[pv]){
+                parent[pu] = pv;
+            }else if(height[pv] < height[pu]){
+                parent[pv] = pu;
+            }else{
+                parent[pv] = pu;
+                height[pu]++;
+            }
+        }
+
+        int count = 0;
+
+        // create components map
+        for(int i = 0; i < n; i++){
+            int father = find(i, parent);
+            map.computeIfAbsent(father, k -> new ArrayList()).add(i);
+        }
+
+
+        // check if degree of each node in a component is equal to component size - 1;
+        // as we know each node in a component will have edge from every vertex except itselt.
+        // so nodes are 3 hence every node will have 2 edges incoming.
+        for(Map.Entry<Integer, List<Integer>> entry : map.entrySet()){
+
+            boolean comp = true;
+            for(int num : entry.getValue()){
+                if(degree[num] != entry.getValue().size()-1) {
+                    comp = false;
+                    break;
+                }
+            }
+
+            if(comp) count++;
+        }
+
+        return count;
+    }
+
+    // parent find and path compression.
+    public int find(int x, int[] parent) {
+        if (x == parent[x])
+            return x;
+        int root = find(parent[x], parent);
+        parent[x] = root;
+        return root;
     }
 }
