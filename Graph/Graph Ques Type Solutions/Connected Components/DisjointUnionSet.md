@@ -117,6 +117,9 @@ public int find(int node, int[] parent) {
 
 ---
 
+## Grid union formula
+1. i*col+j - For converting a cell into a array index
+
 ## Summary - Ek Nazar Mein:
 
 1. **Basic DSU** - Parent array + find operation
