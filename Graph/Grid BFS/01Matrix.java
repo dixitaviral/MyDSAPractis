@@ -148,3 +148,44 @@ class Solution {
         return mat;
     }
 }
+
+// final mera lagaya hua solution
+class Solution {
+    public int[][] updateMatrix(int[][] mat) {
+        int dir[][] = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+
+        Queue<int[]> queue = new ArrayDeque();
+
+        for(int i = 0; i < mat.length; i++){
+            for(int j = 0; j < mat[0].length; j++){
+                if(mat[i][j] == 0){
+                    queue.add(new int[]{i,j,0});
+                }else{
+                    mat[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        while(!queue.isEmpty()){
+            int pair[] = queue.poll();
+
+            int i = pair[0];
+            int j = pair[1];
+            int k = pair[2];
+
+            for(int arr[] : dir){
+                int row = i+arr[0];
+                int col = j+arr[1];
+
+                if(row < 0 || col < 0 || row >= mat.length || col >= mat[0].length) continue;
+
+                if(mat[row][col] != 0 && mat[row][col] > k+1){
+                    mat[row][col] = k+1;
+                    queue.add(new int[]{row, col, k+1});
+                }
+            }
+        }
+
+        return mat;
+    }
+}

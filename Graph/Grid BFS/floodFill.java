@@ -1,5 +1,5 @@
 /*
-    You are given an image represented by an m x n grid of integers image, where image[i][j] represents the pixel value of the image. You are also given three integers sr, sc, and color. Your task is to perform a flood fill on the image starting from the pixel image[sr][sc].
+You are given an image represented by an m x n grid of integers image, where image[i][j] represents the pixel value of the image. You are also given three integers sr, sc, and color. Your task is to perform a flood fill on the image starting from the pixel image[sr][sc].
 
 To perform a flood fill:
 
@@ -49,6 +49,8 @@ The starting pixel is already colored with 0, which is the same as the target co
     f. End me iamge return.
 */
 
+
+// BFS Solution
 class Solution {
     public int[][] floodFill(int[][] image, int sr, int sc, int color) {
 
@@ -86,5 +88,32 @@ class Solution {
         }
 
         return image;
+    }
+}
+
+// DFS solution
+class Solution {
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        if(image[sr][sc] == color) return image;
+
+        int original = image[sr][sc];
+
+        dfs(image, sr, sc, color, original);
+
+        return image;
+    }
+
+    public void dfs(int[][] image, int row, int col, int color, int original){
+        if(row < 0 || col < 0 || row >= image.length || col >= image[0].length) return;
+
+        if(image[row][col] != original) return;
+
+        image[row][col] = color;
+
+        dfs(image, row+1, col, color, original);
+        dfs(image, row-1, col, color, original);
+        dfs(image, row, col-1, color, original);
+        dfs(image, row, col+1, color, original);
     }
 }
