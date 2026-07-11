@@ -155,6 +155,10 @@ class Solution {
         // visited yaha isliye check ho ra hai, kyuki agar koi node visited hai, iska mtlb 
         // uss node ka path hum already follow kar chuke hai, and jo ki valid 
         // tabhi hum true return kar rahe hai.
+        // Visited node == 1 check and us par true return krne ka mtlb ye hai ki current node ka jo
+        // path hai, vo safe hai usme koi cycle nahi hai means already caldulate kar chuke ho kind of DP
+        // to dobara mat traverse karo and true return kar do kyuki aage path bina cycle ka hai
+        // hence valid path hai.
         if(visited[node] == 1) return true;
         
         path.add(node);
@@ -169,6 +173,9 @@ class Solution {
         }
 
         path.remove(node);
+        // visited yaha isliye mark kar rahe hai kyuki yaha par flow tabhi aaega jab current node
+        // path puri taraf done ho jaega, jisse ye pata lagega, ki is node se jo path start hota hai
+        // usme koi cycle ni hai.
         visited[node] = 1;
 
         return true;

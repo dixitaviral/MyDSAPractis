@@ -39,17 +39,308 @@ Intution:
     f. Plus humko shortest transition path chaiye, and jaha bat shortest path ki aati hai
     hum seedha BFS lagate hai.
 3. To aao fir intution dekhte hai:
-    a. word ladder me keh ra tha shortest transformation path ka count batao.
-    b. But isme keh ra hai sare shortest transformation path batao.
-    c. Abhi ye karne ke liye pehle to humko ebginword ke all possible combinations or words banane
-        padege and then un words me check karna hoga konsa hamare pas hai word list me.
-    d. Jo present hoga uski list ya set bana kar return kar dege bfe ke ander.
-    e. Abhi yaha se main baat start hoti hai ki humko jitne possible words the jo ki word list me present the vo mil gaye hai.
-    f. Abhi all possible shortest transformation path nikaloge jab to aise niklega ki:
-        i. man lo word hai cat, usse tumko mila bat and dat jo ki word list present hai man lo.
-        ii. Abhi abhi jo bat word se aage jo chain banegi ye ek branch ho gyi jisse humko endword mil sakta hai.
-        iii. and then dat word vali jo branch hogi usse humko ek or branch milegi jo dusra path ho sakta hai.
-        iv. Aise hi or bhi paths ban sakte hai isko humko list me store karana hai, and if endword mil jae to 
-            to result list me store kar do.
-    g. Abhi main baat aati hai ques ka main logic to tumne bana diya hai, but result banane ka logic kese banaoge.
+    a. Bhai iski intution agar mai yaha explain karuga to kafi complex ho jaegi.
+    b. Mai bas steps bata de raha hu, implementation agar yaad na aae to neeche soltuion me refer kar dena.
+    c. Aao steps dekhe:
+        i. Sabse pehle bfs chalao, valid words create karo and min distance nikalo and map banao.
+        ii. Map ka kya scene hai, ki words transition me kon kon se words valid path se belong krte hai
+            ye store karta hai.
+        iii. Abhi map banane ke do tareeke hau neeche explain kiya hai, but in short agar tum, child to parent
+            map banate ho to jada fayda hai, bajae parent to child ke.
+        iv. Then tumko minDistance and map dfs me pass kar dena hai.
+        v. Then DFS chala kar path store kar lo list me.
+        vi. bas itna hi hai. Lekin implementation thora dhyan dekr karne vala hai.
+
 */
+
+
+
+// BFS + DFS solution (Not optimised)
+
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        Set<String> wordSet = new HashSet(wordList);
+
+        if(!wordSet.contains(endWord)) return List.of();
+
+        Queue<String> queue = new ArrayDeque();
+
+        Set<String> outerVisited = new HashSet();
+
+        Map<String, List<String>> map = new HashMap();
+
+        List<List<String>> result = new ArrayList();
+
+        queue.add(beginWord);
+
+        outerVisited.add(beginWord);
+
+        int minDistance = 1;
+        // ye flag isliye use kar rahe taki inner level while loop ko jab break karege
+        // tab ander vala hi break hoga, bahr vala bhi break karna hai
+        // tabhi ander while loop ko break krte time, flag true kar dege, taki
+        // bahr vala bhi break ho jae.
+        boolean flag = false;
+
+
+        // run BFS to create a map of valid next words and take out shortest distance
+        // map why? kyuki map ban raha hai hit -> hot, then hot -> dot and lot
+        // isko hum dfs me pass karege taki dfs sirf inhi words par scan kare.
+        while(!queue.isEmpty()){
+            int size = queue.size();
+
+            // innervisited isliye lagaya hai, taki jab hume koi aisa case milta hai
+            // ki man lo do words hai dog and log, abhi ye dono se humko endword cog mil jaega
+            // but tum dog ke bad cog milne par cog ko visited mark kar doge.
+            // then log process hoga, vapas se cog aaega, uss time par tum cog ko vapas
+            // queue me add nahi karoge, jisse ye log vala path explore ni hoga and 
+            // map me ye log vali entry nahi ho paegi.
+            // Isliye hum ek level par jitne bhi words process krne hai, hum usko ek alag
+            // visited set me manage karege, taki agar dog and log same level par aaege
+            // and vo cog banaege, to internal visited cog ko visited mark karke queue me add 
+            // kar dega, and usse pehle dog and log joki valid path se belong krte hai
+            // vo unki entry bhi ho jaegi kuch aise
+            // dog -> cog, log -> cog.
+            // fir ek level khatam hone ke bad, ye innerVisited ko hum, outer visited me
+            // add kar dege, ki agar next level par same word aate hai to skip kar de.
+            Set<String> innerVisited = new HashSet();
+            
+            // par ab tumhre man me ek ques aaega ki yar jab dog se cog bana tab
+            // innervisited me add ho gaya, then uske bad log se cog bana vo to innervisited check 
+            // me skip ho jaega. To mene kaha ha koi bat ni queue me repeated entry ni hui
+            // but usse pehle ki line to dekho jisme humne kaha hai ki map me log-> cog ki entry kar do.
+            // humko us entry se mtlb hai, ki jab later me dfs chale to log -> cog vali entry bhi
+            // consider ho.
+
+
+
+            while(size-- > 0){
+                String str = queue.poll();
+
+                if(str.equals(endWord)){
+                    flag = true;
+                    break;
+                }
+
+                List<String> validWords = createComb(str, wordSet);
+
+                for(String valid : validWords){
+                    if(outerVisited.contains(valid)) continue;
+                    map.computeIfAbsent(str, k -> new ArrayList()).add(valid);
+                    if(innerVisited.contains(valid)) continue;
+                    innerVisited.add(valid);
+                    queue.add(valid);
+                }
+            }
+
+            // bhai jo words process kar chuke ho unko dobara nahi banana isliye wordSet se vo words hata do
+            // take dobara jab createComb function call ho tab same words vapas na bane
+            // agar confusion ye hai ki endword bhi hat jaega jan iinerVisited me endword aa jaega
+            // to uska ans ye hai ki hum bfs ka vo level puri tarah explore kar chuke hai
+            // jo endword bana raha hai. That means humko shortest path already mil gaya hai.
+            wordSet.removeAll(innerVisited);
+
+            if(flag) break;
+
+            // agar ye na smjh aae to inner visited vala explaination padh lena upar smjh aa jaega.
+            outerVisited.addAll(innerVisited);
+
+            minDistance++;
+        }
+
+        dfs(minDistance, beginWord, endWord, map, result, new LinkedHashSet());
+
+        return result;
+        
+    }
+
+    public void dfs(int minDistance, String startWord, String endWord, Map<String, List<String>> map, List<List<String>> result, Set<String> visited){
+        if(visited.size() > minDistance-1) return;
+
+        if(endWord.equals(startWord)){
+            visited.add(startWord);
+
+            result.add(new ArrayList(visited));
+
+            visited.remove(startWord);
+
+            return;
+        }
+
+        visited.add(startWord);
+
+        for(String str : map.getOrDefault(startWord, List.of())){
+            if(visited.contains(str)) continue;
+
+            dfs(minDistance, str, endWord, map, result, visited);
+        }
+
+        visited.remove(startWord);
+    }
+
+    public List<String> createComb(String word, Set<String> set){
+        List<String> validWords = new ArrayList();
+
+        for(int i = 0; i < word.length(); i++){
+            for(char j = 'a'; j <= 'z'; j++){
+                char arr[] = word.toCharArray();
+                if(arr[i] == j) continue;
+                arr[i] = j;
+                String newWord = new String(arr);
+                if(set.contains(newWord)){
+                    validWords.add(newWord);
+                }
+            }
+        }
+
+        return validWords;
+    }
+}
+
+
+// BFS + DFS solution Optimised:
+// neeche ka solution same hai upar se, bs optimised ye hai ki:
+
+// upar vale me map ban raha hai aise:
+// beginword = hit
+// to map bana {hit -> {hot}, hot->{dot, lot}, dot->{dog}, lot->{log}, dog->{cog}, log->{cog}}
+// means parent to child banaya
+// to dfs chalega from startword to endword.
+
+// but neeche hum bana rahe hai child to parent relationship
+// for example:
+// endword cog and beginword hit
+// {cog -> {log, dog}, log->{lot}, dog->{dot}, dot->{hot}, lot->{hot}, hot->{hit}}
+// isse solution jaldi milega
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        Set<String> wordSet = new HashSet(wordList);
+
+        if(!wordSet.contains(endWord)) return List.of();
+
+        Queue<String> queue = new ArrayDeque();
+
+        Set<String> outerVisited = new HashSet();
+
+        Map<String, List<String>> map = new HashMap();
+
+        List<List<String>> result = new ArrayList();
+
+        queue.add(beginWord);
+
+        outerVisited.add(beginWord);
+
+        int minDistance = 1;
+        boolean flag = false;
+
+        // run BFS to create a map of valid next words and take out shortest distance
+        // map why? kyuki map ban raha hai hit -> hot, then hot -> dot and lot
+        // isko hum dfs me pass karege taki dfs sirf inhi words par scan kare.
+        while(!queue.isEmpty()){
+            int size = queue.size();
+
+            // innervisited isliye lagaya hai, taki jab hume koi aisa case milta hai
+            // ki man lo do words hai dog and log, abhi ye dono se humko endword cog mil jaega
+            // but tum dog ke bad cog milne par cog ko visited mark kar doge.
+            // then log process hoga, vapas se cog aaega, uss time par tum cog ko vapas
+            // queue me add nahi karoge, jisse ye log vala path explore ni hoga and 
+            // map me ye log vali entry nahi ho paegi.
+            // Isliye hum ek level par jitne bhi words process krne hai, hum usko ek alag
+            // visited set me manage karege, taki agar dog and log same level par aaege
+            // and vo cog banaege, to internal visited cog ko visited mark karke queue me add 
+            // kar dega, and usse pehle dog and log joki valid path se belong krte hai
+            // vo unki entry bhi ho jaegi kuch aise
+            // dog -> cog, log -> cog.
+            // fir ek level khatam hone ke bad, ye innerVisited ko hum, outer visited me
+            // add kar dege, ki agar next level par same word aate hai to skip kar de.
+            Set<String> innerVisited = new HashSet();
+            
+            // par ab tumhre man me ek ques aaega ki yar jab dog se cog bana tab
+            // innervisited me add ho gaya, then uske bad log se cog bana vo to innervisited check 
+            // me skip ho jaega. To mene kaha ha koi bat ni queue me repeated entry ni hui
+            // but usse pehle ki line to dekho jisme humne kaha hai ki map me log-> cog ki entry kar do.
+            // humko us entry se mtlb hai, ki jab later me dfs chale to log -> cog vali entry bhi
+            // consider ho.
+
+            while(size-- > 0){
+                String str = queue.poll();
+
+                if(str.equals(endWord)){
+                    flag = true;
+                    break;
+                }
+
+                List<String> validWords = createComb(str, wordSet);
+
+                for(String valid : validWords){
+                    if(outerVisited.contains(valid)) continue;
+                    map.computeIfAbsent(valid, k -> new ArrayList()).add(str);
+                    if(innerVisited.contains(valid)) continue;
+                    innerVisited.add(valid);
+                    queue.add(valid);
+                }
+            }
+
+            // bhai jo words process kar chuke ho unko dobara nahi banana isliye wordSet se vo words hata do
+            // take dobara jab createComb function call ho tab same words vapas na bane
+            // agar confusion ye hai ki endword bhi hat jaega jan iinerVisited me endword aa jaega
+            // to uska ans ye hai ki hum bfs ka vo level puri tarah explore kar chuke hai
+            // jo endword bana raha hai. That means humko shortest path already mil gaya hai.
+            wordSet.removeAll(innerVisited);
+            if(flag) break;
+            outerVisited.addAll(innerVisited);
+
+            minDistance++;
+        }
+
+        dfs(minDistance, beginWord, endWord, map, result, new LinkedHashSet());
+
+        return result;
+        
+    }
+
+    public void dfs(int minDistance, String startWord, String endWord, Map<String, List<String>> map, List<List<String>> result, Set<String> visited){
+        if(visited.size() > minDistance-1) return;
+
+        if(endWord.equals(startWord)){
+            visited.add(endWord);
+
+            List<String> list = new ArrayList(visited);
+            Collections.reverse(list);
+
+            result.add(new ArrayList(list));
+
+            visited.remove(endWord);
+
+            return;
+        }
+
+        visited.add(endWord);
+
+        for(String str : map.getOrDefault(endWord, List.of())){
+            if(visited.contains(str)) continue;
+
+            dfs(minDistance, startWord, str, map, result, visited);
+        }
+
+        visited.remove(endWord);
+    }
+
+    public List<String> createComb(String word, Set<String> set){
+        List<String> validWords = new ArrayList();
+
+        for(int i = 0; i < word.length(); i++){
+            for(char j = 'a'; j <= 'z'; j++){
+                char arr[] = word.toCharArray();
+                if(arr[i] == j) continue;
+                arr[i] = j;
+                String newWord = new String(arr);
+                if(set.contains(newWord)){
+                    validWords.add(newWord);
+                }
+            }
+        }
+
+        return validWords;
+    }
+}
