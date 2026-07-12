@@ -344,3 +344,154 @@ class Solution {
         return validWords;
     }
 }
+
+// A bit more optimal approach
+
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        Set<String> wordSet = new HashSet(wordList);
+
+        if(!wordSet.contains(endWord)) return List.of();
+
+        Queue<String> queue = new ArrayDeque();
+
+        Set<String> outerVisited = new HashSet();
+
+        Map<String, List<String>> map = new HashMap();
+
+        List<List<String>> result = new ArrayList();
+
+        Map<String, List<String>> relatedWords = new HashMap();
+
+        createWildCardMap(wordSet, relatedWords);
+
+        queue.add(beginWord);
+
+        outerVisited.add(beginWord);
+
+        int minDistance = 1;
+        boolean flag = false;
+
+        while(!queue.isEmpty()){
+            int size = queue.size();
+
+            Set<String> innerVisited = new HashSet();
+
+            while(size-- > 0){
+                String str = queue.poll();
+
+                if(str.equals(endWord)){
+                    flag = true;
+                    break;
+                }
+
+                // this approach create all possible combinations of a word. if a word is hit the it will create
+                // hit's length that is 3 * 26 alphabets combinations
+                // which is vast
+                // List<String> validWords = createComb(str, wordSet);
+
+                // this approach basically works over wildcard strings. We pre-compute wild cards.
+                // let's say in test case one we have hot, so in map we will store
+                // *ot -> hot, h*t -> hot, ho* -> hot.
+                // Now while creating combinations we will create these wildcards, if any wildcard matches it will
+                // return all words present in wordList
+                // This approach is too optimal and it has complexity of equal to string length
+                List<String> validWords = createCombViaMap(str, relatedWords);
+
+
+                for(String valid : validWords){
+                    if(outerVisited.contains(valid)) continue;
+                    map.computeIfAbsent(valid, k -> new ArrayList()).add(str);
+                    if(innerVisited.contains(valid)) continue;
+                    innerVisited.add(valid);
+                    queue.add(valid);
+                }
+            }
+
+            // bhai jo words process kar chuke ho unko dobara nahi banana isliye wordSet se vo words hata do
+            // take dobara jab createComb function call ho tab same words vapas na bane
+            // agar confusion ye hai ki endword bhi hat jaega jan iinerVisited me endword aa jaega
+            // to uska ans ye hai ki hum bfs ka vo level puri tarah explore kar chuke hai
+            // jo endword bana raha hai. That means humko shortest path already mil gaya hai.
+            wordSet.removeAll(innerVisited);
+            if(flag) break;
+            outerVisited.addAll(innerVisited);
+
+            minDistance++;
+        }
+
+        dfs(minDistance, beginWord, endWord, map, result, new LinkedHashSet());
+
+        return result;
+        
+    }
+
+    public void dfs(int minDistance, String startWord, String endWord, Map<String, List<String>> map, List<List<String>> result, Set<String> visited){
+        if(visited.size() > minDistance-1) return;
+
+        if(endWord.equals(startWord)){
+            visited.add(endWord);
+
+            List<String> list = new ArrayList(visited);
+            Collections.reverse(list);
+
+            result.add(new ArrayList(list));
+
+            visited.remove(endWord);
+
+            return;
+        }
+
+        visited.add(endWord);
+
+        for(String str : map.getOrDefault(endWord, List.of())){
+            if(visited.contains(str)) continue;
+
+            dfs(minDistance, startWord, str, map, result, visited);
+        }
+
+        visited.remove(endWord);
+    }
+
+    // public List<String> createComb(String word, Set<String> set){
+    //     List<String> validWords = new ArrayList();
+
+    //     for(int i = 0; i < word.length(); i++){
+    //         for(char j = 'a'; j <= 'z'; j++){
+    //             char arr[] = word.toCharArray();
+    //             if(arr[i] == j) continue;
+    //             arr[i] = j;
+    //             String newWord = new String(arr);
+    //             if(set.contains(newWord)){
+    //                 validWords.add(newWord);
+    //             }
+    //         }
+    //     }
+
+    //     return validWords;
+    // }
+
+    public List<String> createCombViaMap(String word, Map<String, List<String>> map){
+        List<String> validWords = new ArrayList();
+
+        for(int i = 0; i < word.length(); i++){
+            char arr[] = word.toCharArray();
+
+            arr[i] = '*';
+
+            validWords.addAll(map.getOrDefault(new String(arr), List.of()));
+        } 
+
+        return validWords;
+    }
+
+    public void createWildCardMap(Set<String> set, Map<String, List<String>> map){
+        for(String s : set){
+            for(int i = 0; i < s.length(); i++){
+                char arr[] = s.toCharArray();
+                arr[i] = '*';
+                map.computeIfAbsent(new String(arr), k -> new ArrayList()).add(s);
+            }
+        }
+    }
+}
