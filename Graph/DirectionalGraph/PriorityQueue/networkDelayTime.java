@@ -52,7 +52,7 @@ Intution:
     r. Abhi ye hone ke bad last me visited me loop chalao and check karo ki koi visited array me
         kahi Integer.MAX_VALUE mila iska mtlb koi aisa node hai jo unreachable hai return -1.
     s. If no then calculate ans, but since visited array me check karo ki max ans konsa hai,
-        kyuki max ans vahi hoga jiski vajah se sari nodes visited hui. to return that.
+        kyuki max ans vahi hoga jiski vajah se sari nodes visited hui. to return that. 
 */
 
 class Solution {
@@ -110,5 +110,56 @@ class Solution {
         }
 
         return ans;
+    }
+}
+
+// without PQ
+class Solution {
+    public int networkDelayTime(int[][] times, int n, int k) {
+        Map<Integer, Map<Integer, Integer>> map = new HashMap();
+
+        for(int time[] : times){
+            int u = time[0];
+            int v = time[1];
+            int w = time[2];
+
+            map.computeIfAbsent(u, t -> new HashMap()).put(v, w);
+        }
+
+        Queue<int[]> queue = new ArrayDeque();
+
+        int visited[] = new int[n+1];
+
+        queue.add(new int[]{k, 0});
+        Arrays.fill(visited, Integer.MAX_VALUE);
+        visited[k] = 0;
+        visited[0] = 0;
+
+        int ans = 0;
+
+        while(!queue.isEmpty()){
+            int pair[] = queue.poll();
+            int i = pair[0];
+            int w = pair[1];
+
+            Map<Integer, Integer> next = map.getOrDefault(i, Map.of());
+
+            for(Map.Entry<Integer, Integer> entry : next.entrySet()){
+                int node = entry.getKey();
+                int value = entry.getValue();
+                int sum =  w+value;
+                if(visited[node] > sum){
+                    visited[node] = sum;
+                    queue.add(new int[]{node, sum});
+                }
+            }
+        }
+
+        for(int num : visited){
+            if(num == Integer.MAX_VALUE) return -1;
+            ans = Math.max(ans, num);
+        }
+
+        return ans; 
     }
 }
