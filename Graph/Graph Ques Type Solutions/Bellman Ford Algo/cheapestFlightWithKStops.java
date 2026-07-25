@@ -119,6 +119,110 @@ Important Note:
 
 */
 
+
+/*
+Aao bhai is ques se related ek katha sunata hu:
+
+Katha hai ye ki neeche solution diya hai, ye almost optimised hai PQ use kiya hai, dist array use kiya hai
+lekin guru iss ques me ek bhasad hai. Aao smjhata hu
+
+Bhai tumne kaha ki pq mst use karege and sath me dist array update krte rhege. Sath me agar dst mil gaya
+to stops ni ghataege and agar ni mila to stops ghata dege. Ya yu keh lo pehle check kar lege
+ki bhai agar stops - 1 == -1 ho gaya hai and next node != dst to continue kar do. Or agar
+aisa ni hai mtlb hamare pas stops bache hue hai to bhai use karo queue me dalo stops -1 karke.
+
+Badhiya ho jaega. Haina?
+
+Bhai yahi mujhe bhi laga tha hamesha yahi solution likh deta tha is question ke liye.
+
+Or jo cheez batane ja ra hu vo hamesha dekh kar krta tha but doabara same ques karo to click ni karta tha.
+
+Par aaj mene bola aisi taisi, ab se jab lagauga tab click karega. To bhai aao smjhe kya scene ho ra abhi
+
+Yar man lo tumhre pas queue me do object pade hai ek keh ra hai {A, 100, 2}, dusra keh ra hai {A, 40, 1}. 
+
+Abhi tumhre hisaab se pq se nikalna chahiye 40 vala mene kaha theek but ruko man lo ek or state aa gyi {A, 80, 2};
+
+Abhi yar tumne distance array update kar diya tha 40 se to 80 bada hai ye store hi ni hoga. 
+
+Par guru ek bat batao agar tum ek point par khade ho and tmhre pas choice hai stops ki and cost ki
+
+Ques keh ra stops dekho agar khtm hue to aage ni ja skte, to importance yaha stop ki hai
+
+uske bad cost ki bhi hai.
+
+To mere bhai A, 80, 2 vali state hai jo agar usko tum compare karoge A,100,2 vali se to bhai better state hai.
+
+But 1d array distance me update ni hi hoga kyuki dist[A] = 40 hai.
+
+Yaha concept aata hai 2d array ka ki tum dist[node][stops] ka banao taki PQ me sari better state ja sake.
+
+Agar 2d array use kiya to A2 par pehle 100 store hoga then A,2,80 vali state aaegi to better state hui ye to abhi ye store hokr
+queue me add hogi.
+
+Yahi concept hai 2d array ka. Isiliye ques me kuch test cases hai jo isi 2d array na lagane ki vajah se fail ho jate hai.
+
+Sabse neeche mene 2d array vala solution bhi diya hai.
+*/
+
+// Almost optimized
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer, Map<Integer, Integer>> map = new HashMap();
+
+        for(int flight[] : flights){
+            map.computeIfAbsent(flight[0], i -> new HashMap()).put(flight[1], flight[2]);
+        }
+
+        PriorityQueue<int[]> queue = new PriorityQueue<>((int a[], int b[]) -> Integer.compare(a[1], b[1]));
+
+        int dist[] = new int[n+1];
+
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        dist[src] = 0;
+        queue.add(new int[]{src,0,k});
+
+        while(!queue.isEmpty()){
+            int pair[] = queue.poll();
+
+            int i = pair[0];
+            int cost = pair[1];
+            int stops = pair[2];
+
+            if(i == dst) return cost;
+
+            Map<Integer, Integer> temp = map.getOrDefault(i, Map.of());
+
+            for(Map.Entry<Integer, Integer> entry : temp.entrySet()){
+                int node = entry.getKey();
+                int value = entry.getValue();
+
+                // marzi hai ye line yaha likhi hai ya for loop se pehle 
+                // agar vaha likhoge and yaha ni likhoge to common sense ki bat hai
+                // kisi bhi node par stops -1 ya usse neche aaega to tum queue me push kar doge.
+                // koi ni, but then upar tumko if(stops < -1) to continue vali condition lagani hogi.
+                // kyuki dekho yaha se condition hataoge to dst jab queue me add hogi and stops already use 
+                // kar chuke ho to chances hai ki negative me store hogi.
+                // Ab agar -1 stored hai dst ke sath to badhiya hai, kyu kyuki uska
+                // mtlb hai ki tumne dst ko bhi ek stop man liye tabhi -1 hui, but -2 hai betta to continue
+                // kar do kyuki abhi tumne zarurt se zada stops use kar liye hai
+                if(stops-1 < 0 && node != dst) continue;
+
+                int sum = value+cost;
+
+                if(sum < dist[node]){
+                    dist[node] = sum;
+                    queue.add(new int[]{node, sum, stops-1});
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+
+// optimised
 class Solution {
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
         Map<Integer, Map<Integer, Integer>> map = new HashMap();
@@ -139,6 +243,7 @@ class Solution {
         queue.add(new int[]{src, 0, k});
         int minFare = Integer.MAX_VALUE;
 
+        // 2d array ka concept upar smjhaya hai dekh lo jakr
         int dist[][] = new int[n+1][k+1];
 
         for(int arr[] : dist){
@@ -166,14 +271,17 @@ class Solution {
             for(Map.Entry<Integer, Integer> entry : temp.entrySet()){
                 if(stops-1 < 0 && entry.getKey() != dst) continue;
 
-                // this is making optimal in a way, that if we already have a minFare compared to current
-                // then doesn't matter to calculate new one.
-                // since hum sum return kar rahe hai this line is not needed now.
-                // if(minFare < sum+entry.getValue()) continue;
-
                 // this is making it optimal in a way which it is seeing the cheapest path
                 // for that stop and that node.
                 // if already a cheap path exists then don't calculate that path.
+
+                // or neeche stops-1 kyu ni kiya, to usko aise smjho ki
+                // jab tak queue se poll ni hota hum us node par khade rehte hai
+                // abhi tumhra dimag kahega bhai queue me to multiple nodes hoti hai sab par
+                // khade rhege to ha bhai sab par ek ek apna bnda khada hai aise smjho
+                // to jab tak vo banda move krke next node par ni jata mtlb queue me 
+                // entry ho gyi iska mtlb ab vo dusra rasta explore karne chala gaya hai
+                // jab tak ni hui vo usi stop par hai
                 if(sum+entry.getValue() < dist[entry.getKey()][stops]){
                     dist[entry.getKey()][stops] = sum+entry.getValue();
                     queue.add(new int[]{entry.getKey(), sum+entry.getValue(), stops-1});
@@ -184,3 +292,72 @@ class Solution {
         return -1;
     }
 }
+
+
+/*
+Aao bhai ek optimal approach dekhte hai for taking out cheapest stops with k flights.
+
+1. Ye approach ek algorithm se dervied hai jisko bolte hai bellman ford algorithm.
+2. Notes already banae hai agar dekhna ho to Graph > Algorithm folder jakr dekh skte ho.
+3. Chalo ques tumhe pehle se pata hi hoga.
+4. Abhi ek cheez smjh lo:
+    a. k jo diya hai ques me, vo keh ra hai bhai k stops me hi pohoch skte ho.
+    b. abhi k stops mtlb ki beech me tum k nodes par hi ruk skte ho usse jada ni.
+    c. Par ques me to edges di hoti hai.
+    d. to agar k ke respoect me edges nikaloge to soccho kitni edges niklegi.
+    e. Chalo agar 0 stops me pohochna hai, to kitni edge traverse karoge, 1 right src to dst ek edge to aaegi hi.
+    f. Aise hi man lo 1 stops hai to 1 node beech me ruk skte ho, to kitni edges hui, src to node to dst, total edges hui 2.
+    g To idea ye mila ki k stops hai to humko k+1 edges tak hi traverse krna hai.
+5. Abhi Bellman ford me humko src diya hota hai and sari destinations par jakr uska shorest cost nikalte hai.
+6. Vaha pehla loop lagta hai till < n and inner loop sari edges par.
+7. Abhi till < n lagane ka mtlb yahi hota hai ki jitni nodes hai graph me vo sari se cost pata chal jae.
+8. Since iss ques me k ke form me tum keh skte ho edges di hai, abhi humne dekha ki k mtlb nodes to k+1 mtlb edges
+9. To Agar hum main loop chalae  i <= k tak to hamara kam ho jaega.
+10. Bas baki inner loop me relaxation hi krni hai.
+11. Abhi lekin ek tweak or hai. Since k = 0 ka mtlb hai ki src se immediate jo edges hai unko traverse karo sirf.
+12. But inner edge vala loop to sari edges ko traverse krega.
+13. Isko hume rokna hoga, to hum do array use karege, ek temp and dusra dist.
+14. dist array hum relaxation check ke liye use karege and temp array hum for the iteration k=0 vali nodes ka dist temp update karege.
+15. Then temp update ho jaega after one whole inner loop then hum temp ki copy dist array me dal dege.
+16. Make sure ki inner edge loop me dist array par check lagaege but sum store krte time temp array par check lagega.
+17. And temp me hi sum store karege.
+18. Bas akhir me dist[dst] return kar dege.
+
+*/
+
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        int dist[] = new int[n+1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        dist[src] = 0;
+
+        int temp[] = new int[n+1];
+
+        Arrays.fill(temp, Integer.MAX_VALUE);
+
+        temp[src] = 0;
+
+        for(int i = 0; i <= k; i++){
+            for(int j = 0; j < flights.length; j++){
+                int node = flights[j][0];
+                int nbr = flights[j][1];
+                int cost = flights[j][2];
+
+                if(dist[node] == Integer.MAX_VALUE) continue;
+
+                int sum = dist[node]+cost;
+
+                if(temp[nbr] > sum){
+                    temp[nbr] = sum;
+                }
+            }
+
+            dist = Arrays.copyOf(temp, temp.length);
+        }
+        
+        return dist[dst] == Integer.MAX_VALUE ? -1 : dist[dst];
+    }
+}
+
+

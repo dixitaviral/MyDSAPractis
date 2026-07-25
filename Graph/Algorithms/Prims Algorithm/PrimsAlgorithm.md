@@ -168,8 +168,26 @@ Total edges = `V - 1 = 4`.
 
 ---
 
-## ✅ Final note
+## 🔍 Dijkstra vs Prim’s — easy language
 
-Agar tumhe `Prim’s` ka code bhi chahiye ya `DSU` wala Kruskal compare karna hai, bol de.
+- **Dijkstra** = Tum city me travel kar rahe ho aur ghar se har city tak **minimum travel cost** dhoond rahe ho.
+- **Prim’s** = Tum sab gharon ko **electric wire** se connect karna chahte ho minimum total wire length me.
 
-Bhai, yehi tha easy aur colorful Prim’s explanation with example aur friendly reading style. 🚀
+Dono me PQ hai, lekin goal alag:
+
+- **Dijkstra** → PQ orders by **distance from source**
+- **Prim’s** → PQ orders by **edge weight**
+
+Important difference:
+
+- **Dijkstra**: Relaxation: `dist[u] + wt < dist[v]`
+- **Prim’s**: Bas cheapest edge choose karo jo tree ke bahar wale node ko connect kare
+
+Aur yeh bhi yaad rakho:
+
+- **Dijkstra** → Path matters
+- **Prim’s** → Path doesn’t matter
+- **Dijkstra** → Distance array mandatory
+- **Prim’s** → Distance array optional (often `visited` + PQ is enough)
+
+---

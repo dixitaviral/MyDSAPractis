@@ -7,7 +7,7 @@
 ### Sach bolun toh:
 
 - Graph ke saare nodes ko connect karna hai.
-- Cycle **mat banani** hai.
+- Cycle **nahi banani** hai.
 - Aur total edge ka weight **sabse kam** hona chahiye.
 
 > Simple: sab nodes ko jodna, par bina extra jod tod ke, sabse sasta way.
