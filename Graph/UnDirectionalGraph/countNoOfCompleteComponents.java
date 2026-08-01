@@ -91,7 +91,9 @@ class Solution {
             map.computeIfAbsent(v, k -> new ArrayList()).add(u);
         }
 
-
+        // every edge is getting counted two times because we have created mapping from u to v and v to u.
+        // so in v's map list u will be there and u map list v will be there
+        // but the edge is same only bro
         for(int i = 0; i < n; i++){
             if(visited[i] == 0){
                 nodes = 0;

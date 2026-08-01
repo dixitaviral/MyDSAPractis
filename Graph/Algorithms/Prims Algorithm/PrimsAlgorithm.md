@@ -45,7 +45,47 @@ Kuch is tarah socho:
 
 ---
 
-## 📘 Example with graph
+## � Simple Java code
+
+```java
+// Graph represented as adjacency matrix
+// graph[u][v] = weight of edge u-v, 0 means no edge
+
+public int primMST(int[][] graph) {
+    int n = graph.length;
+    boolean[] visited = new boolean[n];
+    int[] minEdge = new int[n];
+
+    Arrays.fill(minEdge, Integer.MAX_VALUE);
+    minEdge[0] = 0; // start from node 0
+
+    int total = 0;
+
+    for (int i = 0; i < n; i++) {
+        int u = -1;
+        for (int j = 0; j < n; j++) {
+            if (!visited[j] && (u == -1 || minEdge[j] < minEdge[u])) {
+                u = j;
+            }
+        }
+
+        visited[u] = true;
+        total += minEdge[u];
+
+        for (int v = 0; v < n; v++) {
+            if (!visited[v] && graph[u][v] != 0 && graph[u][v] < minEdge[v]) {
+                minEdge[v] = graph[u][v];
+            }
+        }
+    }
+
+    return total;
+}
+```
+
+---
+
+## �📘 Example with graph
 
 Graph lete hain:
 
