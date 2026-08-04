@@ -153,9 +153,18 @@ class Solution {
                         if(ni < 0 || nj < 0 || ni >= row || nj >= col) continue;
 
                         if(grid[ni][nj] == '0') continue;
+                        
 
-                        int curr = i*col+j;
-                        int neighbour = ni*col+nj;
+                        // i*col+j is the formula used to covert a whole matrix
+                        // cell into a single number through which we can store
+                        // or fill the parent array.
+
+                        // where as if you want to union the cordinates then you have
+                        // to manage the over flow, means row will be treated from 0 to rowLen
+                        // in parent array and col will be treated from rowLen+1 to 
+                        // parent.length-1;
+                        int curr = i*col+j; // u
+                        int neighbour = ni*col+nj; // v
 
                         if(union(parent, height, curr, neighbour)){
                             count--;
