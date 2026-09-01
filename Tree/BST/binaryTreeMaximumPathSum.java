@@ -59,6 +59,8 @@ Intution:
             b. To uske liye humko max of root and left, right return krna hoga.
     c. To ye 3 condition hai abhi ek condition or hai jo ki hum kadane algo se lege ki negative values ko hum
         ni consider karege.
+    d. Ye smjho ki 2 and 3 condition jo hai uska max return condition me jaega baki i vali condition se sirf
+        ans consider krna hai.
     d. To ab baat krte hai base condition ki vo hogi if (node == null) return null.
 */
 
