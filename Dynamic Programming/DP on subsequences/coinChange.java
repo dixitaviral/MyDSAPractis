@@ -59,7 +59,7 @@ Intution:
     i. Bas fir kya return min of take and not take ko memo me store karo and upar memo me agar value hai to vo return
         karo khatam.
 
-Ho gaua coin change with DP.
+Ho gaya coin change with DP.
 */
 
 
@@ -115,4 +115,43 @@ class Solution {
 
         return memo[i][sum] = Math.min(take, notTake);
     }
+}
+
+// without sum just amoutn as state solution
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+
+        int memo[][] = new int[coins.length][amount+1];
+        
+        for(int nums[] : memo){
+            Arrays.fill(nums, -1);
+        }
+       
+       int ans = helper(coins, amount, 0, memo);
+
+       return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+
+    public int helper(int[] coins, int amount, int i, int memo[][]){
+        if(i == coins.length){
+            return Integer.MAX_VALUE;
+        }
+
+        if(amount < 0) return Integer.MAX_VALUE;
+
+        if(amount == 0) return 0;
+
+        if(memo[i][amount] != -1) return memo[i][amount];
+
+        int take = helper(coins, amount-coins[i], i, memo);
+
+        if(take != Integer.MAX_VALUE){
+            take += 1;
+        }
+
+        int notTake = helper(coins, amount, i+1, memo);
+
+        return memo[i][amount] = Math.min(take, notTake);
+    }
+        
 }
