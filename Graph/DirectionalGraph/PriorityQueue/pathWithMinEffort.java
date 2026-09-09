@@ -226,48 +226,58 @@ class Solution {
 
 // Optimal Solution with PQ and memoization
 class Solution {
-    public static int arr[][] = new int[][]{{0,1},{1,0},{-1,0},{0,-1}};
     public int minimumEffortPath(int[][] heights) { 
-        PriorityQueue<int[]> queue = new PriorityQueue<>(
-            (int[] a, int b[]) -> a[2] - b[2]
-        );
+        int dir[][] = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+        int rowLen = heights.length;
+        int colLen = heights[0].length;
+        PriorityQueue<int[]> queue = new PriorityQueue<>((int a[], int b[]) -> Integer.compare(a[2], b[2]));
 
         queue.add(new int[]{0,0,0});
+        
+        int visited[][] = new int[rowLen][colLen]; 
 
-        int matrix[][] = new int[heights.length][heights[0].length];
+        for(int arr[] : visited){
+            Arrays.fill(arr, Integer.MAX_VALUE);
+        }
 
-        for(int m[] : matrix)
-            Arrays.fill(m, Integer.MAX_VALUE);
+        visited[0][0] = 0;
 
         while(!queue.isEmpty()){
-            int [] temp = queue.poll();
-            int i = temp[0];
-            int j = temp[1];
-            int w = temp[2];
+            int pair[] = queue.poll();
 
-            if(temp[0] == heights.length-1 && temp[1] == heights[0].length-1){
-                return w;
+            int i = pair[0];
+            int j = pair[1];
+            int k = pair[2];// k bata raha hai ki current path jo bfs follow kar ra hai 
+                            // usme abhi tak ye min value aai hai
+
+            if(i == rowLen-1 && j == colLen-1) return k;
+
+            if(visited[i][j] < k) continue;
+
+            for(int arr[] : dir){
+                int row = arr[0]+i;
+                int col = arr[1]+j;
+
+                if(row < 0 || col < 0 || row >= rowLen || col >= colLen) continue;
+
+                // yaha par hum diff current path ne prev-curr node ka kar rahe hai
+                int diff = Math.abs(heights[i][j] - heights[row][col]);
+
+                // since ye ques keh ra hai ki per path ka max effort chahiye, but sare paths ke
+                // jo max effort aaege, unka min chahiye. 
+                // jese matrix me path nikle p1, p2, p2 jinka min effort nikla e1, e2, e3.
+                // abhi ans hoga Math.min(e1, e2, e3). Ye last vala math.min ques while loop me
+                // ni hai isntead priority queue me hai
+                int newEffort = Math.max(k, diff);
+
+                if(newEffort < visited[row][col]){
+                    visited[row][col] = newEffort;
+                    queue.add(new int[]{row, col, newEffort});
+                }
             }
 
-            if(matrix[i][j] < w) continue;
-
-            for(int array[] : arr){
-                int row = i+array[0];
-                int col = j+array[1];
-
-                if(row < 0 || col < 0 || row >= heights.length || col >= heights[0].length) continue;
-
-                int eff = Math.abs(heights[row][col] - heights[i][j]);
-
-                int newEffort = Math.max(eff, w);
-
-                if(matrix[row][col] <= newEffort) continue;
-
-                matrix[row][col] = newEffort;
-                queue.add(new int[]{row, col, newEffort});
-            }            
         }
-                
-        return -1;
+
+        return visited[rowLen-1][colLen-1];
     }
 }
