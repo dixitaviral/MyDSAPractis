@@ -84,3 +84,53 @@ class Solution {
         return dp[i][prev+1] = Math.max(take, notTake);
     }    
 }
+
+
+/*
+1. Below given solution me simple approach use hui hai.. jo tumhe yaad ho to graph me
+    bohot bar use ki hai, ki prev cell tak ki distance from 0th cell agar n and to current cell
+    ki hogi n+current cell cost. Right?
+
+2. Same isme karna hai ki, sabse pehle dp ko 1 se initialise kar do, kyuki har number khud me
+    me LIS hai to array se min 1 length ka LIS to milega hi.
+3. Abhi ek loop chalao i = 0 to n on whole array length and ek loop chalao from 0 to < i.
+4. Abhi dekho man lo i cell par ho, and j cell i se chota hai to mtlb vo LIS me aa skta hai
+    but man lo i cell already calculated ho and i cell ka LIS current banne ja rahe LIS se chota
+    bhi ho skta hai.
+5. Uss case me hum max check karege, ki max of (current lis, jth lis + 1).
+6. Abhi yaha jo mene jth lis likha vahi concept ki baat kar ra tha graph me jo humne lagaya tha.
+7. To j tak ka LIS already pata hai and j se bada element koi mila i par to vo bhi lis ka part
+    hoga to jth lis + 1 i cell ki nayi value ho jaegi if current is lesser.
+8. Bas yahi loop chalate raho and last me jo bhi max num mile dp me usi ko return kar do.
+9. Abhi tum sochoge ki ye bottom up approach hai, to result dp[n-1] me mil jaega, but ni
+    yaha dp ka mtlb ye hai ki kisi index i par jo value hogi, vo i tak ka sabse max possible
+    lis length hai, joki dp[n-1] ni bhi ho skti hai.
+*/
+// more optimised solution 
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        
+        int n = nums.length;
+
+        int dp[] = new int[n];
+
+        Arrays.fill(dp, 1);
+        Arrays.fill(count, 1);
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < i; j++){
+                if(nums[j] < nums[i]){
+                    dp[i] = Math.max(dp[i], dp[j]+1);
+                }
+            }
+        }
+
+        int max = 0;
+        for(int num : dp){
+            max = Math.max(max, num);
+        }
+
+        return max;
+    }
+}
