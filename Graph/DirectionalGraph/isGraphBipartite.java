@@ -91,8 +91,30 @@ Intuition:
     d. Abhi main function me last me return true kar do, kyuki pura dfs chala and
         color cycle ni mili iska mtlb graph bipartite hai.
 
+DSU Solution:
+1. Bhai isko DSU se bhi kar skte hai.
+2. Aao batau kese:
+    1            parent = [1,2,3]
+   /  \
+  3---2
+  a. Bhai DFS me hum coloring krte the. But isme main logic hai ki ek node pakad lo and usse jitne adjacent nodes
+    hai unko ek union me ya group me kar do.
+  b. for example 1 start node hai adjacent node hai 2,3. To abhi 2,3 ek group me hoge and kese bhi 1 ke group
+    me nahi hone chahiye. To sabse pehle hum check karege ki 2 and 3 me se kisi ka parent same as 1 to ni hai.
+  c. abhi agar 1 ka parent and 2 and 3 ka parent match hua, iska mtlb bhai 1 and matching parent of 2 or 3
+        are in same group. To bhai gadbad hai return false.
+  d. So 2,3 ko humne same union kiya and dono ka parent 2 ko bana diya. parent bana = [1,2,2]
+  2. bohot badhiya, abhi jab 2 ko pakda to aaya 1,3. and humne kaha kya 1 ka parent and start node 2 hai jo uska
+    parent same hai. Nahi hai. To 2,3 me 0th element ka parent 2 ko bana diya jae. Means 2 ko 2 ka parent bana do.
+  f. Abhi 3 par aaya hai to humne kaha kya 2 ka parent and 3 ka parent same hai kya, Humne kaha ha same hai
+        to fir return false. Kyuki agar same parent aa gaya iska mtlb ye connected hai.
+  g. to bhai yahi intution hai.
+  h. One line me batau to. Bhai ek node pakadni hai and uske jitne adjacent node hoge, vo alag group me hoge.
+        agar vo same group me kese bhi karke aa re hai to graph is not bipartite.
+
 */
 
+// DFS solution
 class Solution {
     public boolean isBipartite(int[][] graph) {
         int col[] = new int[graph.length];
@@ -123,5 +145,61 @@ class Solution {
        }
 
        return true;
+    }
+}
+
+
+// Union find
+class Solution {
+    public boolean isBipartite(int[][] graph) {
+        int row = graph.length;
+        int parent[] = new int[row];
+
+        int height[] = new int[row];
+
+        for(int i = 0; i < row; i++){
+            parent[i] = i;
+            height[i] = 1;
+        }
+
+        for(int i = 0; i < row; i++){
+
+            if(graph[i].length == 0) continue;
+            int firstNeighbour = graph[i][0];
+
+            for(int v : graph[i]){
+
+                if(find(i, parent) == find(v, parent)) return false;
+
+                int u = firstNeighbour;
+
+                int pu = find(u, parent);
+                int pv = find(v, parent);
+
+                if(pu == pv){
+                    continue;
+                }
+
+                if(height[u] < height[v]){
+                    parent[pu] = pv;
+                }else if(height[v] < height[u]){
+                    parent[pv] = pu;
+                }else{
+                    parent[pv] = pu;
+                    height[pu]++;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    public int find(int x, int parent[]){
+        if(x != parent[x]){
+            parent[x] = find(parent[x], parent);
+        }
+
+        return parent[x];
     }
 }
