@@ -61,3 +61,22 @@ class Solution {
         return res;
     }
 }
+
+// another solution as well, more readable
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        int start = prices[0];
+        int maxProfit = 0;
+
+        for(int i = 1; i < prices.length; i++){
+            if(start < prices[i]){
+                maxProfit = Math.max(maxProfit, prices[i]-start);
+            }else{
+                start = prices[i];
+            }
+        }
+
+        return maxProfit;
+    }
+}
